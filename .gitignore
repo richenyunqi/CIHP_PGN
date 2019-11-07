@@ -4,3 +4,4 @@ logs/
 model/
 *.pyc
 .vscode/
+datasets/
