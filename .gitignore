@@ -1,3 +1,4 @@
+.gitignore
 checkpoint/
 output/
 logs/
@@ -5,3 +6,5 @@ model/
 *.pyc
 .vscode/
 datasets/
+paper/
+copy/
