@@ -33,6 +33,7 @@ def image_resize_output(image_path, output_path, max_height):
         new_img = cv2.flip(new_img, 0)
         new_img = cv2.transpose(new_img)
         imwrite_png(new_img, output_path + '/' + image_name)
+        new_width, new_height = new_height, new_width
     print('output ' + output_path)
     return new_width, new_height
 
@@ -98,24 +99,33 @@ def create_test_data(input_path, output_path, max_height):
 
 
 def test(test_data_path, result_path):
-    images_names = os.listdir(test_data_path)
-    for name in images_names:
-        if 'images' in images_names and os.path.isdir(test_data_path +
-                                                      '/images'):
+    print('test ' + test_data_path)
+    test_data = Test(test_data_path)
+    test_data.main()
+    print('copy images')
+    copy_images(test_data.DATA_DIR, result_path)
+    print('create binary images')
+    create_binary_png(result_path)
 
-            print('test ' + test_data_path)
-            test_data = Test(test_data_path)
-            test_data.main()
-            print('copy images')
-            copy_images(test_data.DATA_DIR, result_path)
-            print('create binary images')
-            create_binary_png(result_path)
-        else:
-            new_dir = result_path + '/' + name
-            if os.path.exists(new_dir) == False:
-                os.mkdir(new_dir)
-            print('dir: ' + test_data_path + '/' + name)
-            test(test_data_path + '/' + name, new_dir)
+# def test(test_data_path, result_path):
+#     images_names = os.listdir(test_data_path)
+#     for name in images_names:
+#         if 'images' in images_names and os.path.isdir(test_data_path +
+#                                                       '/images'):
+
+#             print('test ' + test_data_path)
+#             test_data = Test(test_data_path)
+#             test_data.main()
+#             print('copy images')
+#             copy_images(test_data.DATA_DIR, result_path)
+#             print('create binary images')
+#             create_binary_png(result_path)
+#         else:
+#             new_dir = result_path + '/' + name
+#             if os.path.exists(new_dir) == False:
+#                 os.mkdir(new_dir)
+#             print('dir: ' + test_data_path + '/' + name)
+#             test(test_data_path + '/' + name, new_dir)
 
 
 def create_binary_png(result_path):

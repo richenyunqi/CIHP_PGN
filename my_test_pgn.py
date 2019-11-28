@@ -32,12 +32,13 @@ class Test:
         print("self.DATA_ID_LIST: " + self.DATA_ID_LIST)
         with open(self.DATA_ID_LIST, 'r') as f:
             self.NUM_STEPS = len(f.readlines())
-        print('self.NUM_STEPS: ' + str(self.NUM_STEPS))
+        print('self.NUM_STEPS: ' + str(self.NUM_STEPS)) 
         print('------------test data end---------------')
         output_path = './output'
         if os.path.exists(output_path):
             shutil.rmtree(output_path, True)
-            os.mkdir(output_path)
+            if os.path.exists(output_path)==False:
+                os.mkdir(output_path)
 
     def main(self):
         """Create the model and start the evaluation process."""
