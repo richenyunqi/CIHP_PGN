@@ -6,6 +6,9 @@ import cv2
 
 from my_test_pgn import Test
 from write_txt import *
+from time import time
+
+image_count = 0
 
 
 def imwrite_png(img, output_path):
@@ -15,25 +18,53 @@ def imwrite_png(img, output_path):
     cv2.imwrite(output_path, img)
 
 
-def image_resize_output(image_path, output_path, max_height):
-    image_name = os.path.split(image_path)[1]
+#调整大小、翻转、写入
+# def image_resize_output(image_path, output_path, max_height):
+#     image_name = os.path.split(image_path)[1]
+#     img = cv2.imread(image_path)
+#     height, width = img.shape[:2]
+#     new_width = 0
+#     new_height = 0
+#     if height >= width:
+#         new_height = max_height
+#         new_width = int(width * max_height / height)
+#         new_img = cv2.resize(img, (new_width, new_height))
+
+#         imwrite_png(new_img, output_path + '/' + image_name)
+#     else:
+#         new_width = max_height
+#         new_height = int(height * max_height / width)
+#         new_img = cv2.resize(img, (new_width, new_height))
+#         new_img = cv2.flip(new_img, 0)
+#         new_img = cv2.transpose(new_img)
+#         imwrite_png(new_img, output_path + '/' + image_name)
+#         new_width, new_height = new_height, new_width
+#     print('output ' + output_path)
+#     return new_width, new_height
+
+#写入
+# def image_resize_output(image_path, output_path, max_height):
+#     image_name = os.path.split(image_path)[1]
+#     img = cv2.imread(image_path)
+#     height, width = img.shape[:2]
+#     imwrite_png(img, output_path + '/' + image_name)
+#     print('output ' + output_path)
+#     return width, height
+
+
+#调整大小、写入
+def image_resize_output(image_path, output_path):
+    global image_count
+    image_count += 1
+    file_path = os.path.split(image_path)
+    image_name = file_path[1]
+    dir_name = os.path.split(file_path[0])[1]
     img = cv2.imread(image_path)
     height, width = img.shape[:2]
-    new_width = 0
-    new_height = 0
-    if height >= width:
-        new_height = max_height
-        new_width = int(width * max_height / height)
-        new_img = cv2.resize(img, (new_width, new_height))
-        imwrite_png(new_img, output_path + '/' + image_name)
-    else:
-        new_width = max_height
-        new_height = int(height * max_height / width)
-        new_img = cv2.resize(img, (new_width, new_height))
-        new_img = cv2.flip(new_img, 0)
-        new_img = cv2.transpose(new_img)
-        imwrite_png(new_img, output_path + '/' + image_name)
-        new_width, new_height = new_height, new_width
+    new_height = 1000
+    new_width = int(new_height * width / height)
+    new_img = cv2.resize(img, (new_width, new_height))
+    imwrite_png(new_img, output_path + '/' + dir_name + '_' + image_name)
     print('output ' + output_path)
     return new_width, new_height
 
@@ -80,19 +111,20 @@ def create_tool(output_path):
         output_path)
 
 
-def create_test_data(input_path, output_path, max_height):
+def create_test_data(input_path, output_path):
     images_names = os.listdir(input_path)
     print('Process ' + input_path)
     for name in images_names:
         if os.path.isdir(input_path + '/' + name):
-            create_test_data(input_path + '/' + name, output_path, max_height)
+            create_test_data(input_path + '/' + name, output_path)
         else:
             if os.path.exists(output_path + '/images') == False:
                 os.mkdir(output_path + '/images')
             width, height = image_resize_output(input_path + '/' + name,
-                                                output_path + '/images',
-                                                max_height)
-            create_black_image(name, output_path, width, height)
+                                                output_path + '/images')
+            create_black_image(
+                os.path.split(input_path)[1] + '_' + name, output_path, width,
+                height)
     if os.path.isfile(input_path + '/' + images_names[0]):
         create_list(output_path + '/images')
         create_tool(output_path)
@@ -101,20 +133,24 @@ def create_test_data(input_path, output_path, max_height):
 def test(test_data_path, result_path):
     print('test ' + test_data_path)
     test_data = Test(test_data_path)
+    start = time()
     test_data.main()
+    stop = time()
     print('copy images')
     copy_images(test_data.DATA_DIR, result_path)
     print('create binary images')
     create_binary_png(result_path)
+    create_combine_png(result_path)
+    return stop - start
 
+
+# 这里没有办法进行多次test，因为n_classes
 # def test(test_data_path, result_path):
 #     images_names = os.listdir(test_data_path)
 #     for name in images_names:
-#         if 'images' in images_names and os.path.isdir(test_data_path +
-#                                                       '/images'):
-
+#         if True:
 #             print('test ' + test_data_path)
-#             test_data = Test(test_data_path)
+#             test_data = Test(test_data_path + '/' + name)
 #             test_data.main()
 #             print('copy images')
 #             copy_images(test_data.DATA_DIR, result_path)
@@ -138,22 +174,45 @@ def create_binary_png(result_path):
                     if img[i, j, 0] != 0 or img[i, j, 1] != 0 or img[i, j,
                                                                      2] != 0:
                         img[i, j] = (255, 255, 255)
-            cv2.imwrite(
-                result_path + '/' + os.path.splitext(n)[0] + '_binary.png',
-                img)
-            print('create ' + result_path + '/' + os.path.splitext(n)[0] +
-                  '_binary.png')
+            # img = cv2.resize(img, (3456, 5184))
+            cv2.imwrite(result_path + '/' + n.replace('_vis', '_binary'), img)
+            print('create ' + result_path + '/' + n.replace('_vis', '_binary'))
+
+
+def create_combine_png(result_path):
+    names = os.listdir(result_path)
+    for n in names:
+        if n.find('.png') != -1 and n.find('_binary') != -1:
+            img1 = cv2.imread(result_path + '/' + n)
+            img2 = cv2.imread(result_path + '/' + n.replace('_binary', ''))
+            for i in range(img1.shape[0]):
+                for j in range(img1.shape[1]):
+                    if img1[i, j, 0] == 0 and img1[i, j, 1] == 0 and img1[
+                            i, j, 2] == 0:
+                        img2[i, j] = (0, 0, 0)
+            # img = cv2.resize(img, (3456, 5184))
+            cv2.imwrite(result_path + '/' + n.replace('_binary', '_combine'),
+                        img2)
+            print('create ' + result_path + '/' +
+                  n.replace('_binary', '_combine'))
 
 
 def copy_images(DATA_DIR, result_path):
     names = os.listdir(DATA_DIR + '/images/')
     for n in names:
+        # image_resize_output(DATA_DIR + '/images/' + n, result_path, 3456, 5184)
         shutil.copy(DATA_DIR + '/images/' + n, result_path)
         print('copy ' + DATA_DIR + '/images/' + n, result_path)
     names = os.listdir('./output/cihp_parsing_maps/')
     for n in names:
         if n.find('.png') != -1 and n.find('_vis') != -1:
-            shutil.copy('./output/cihp_parsing_maps/' + n, result_path)
+            img = cv2.imread('./output/cihp_parsing_maps/' + n)
+            for i in range(img.shape[0]):
+                for j in range(img.shape[1]):
+                    if img[i, j, 0] == 221 and img[i, j, 1] == 119 and img[
+                            i, j, 2] == 0:
+                        img[i, j] = (0, 0, 0)
+            cv2.imwrite(result_path + '/' + n, img)
             print('copy ' + './output/cihp_parsing_maps/' + n, result_path)
 
 
@@ -161,7 +220,8 @@ if __name__ == '__main__':
     input_path = input('Please input the input_path: ')
     output_path = input('Please input the output_path: ')
     result_path = input('Please input the result_path: ')
-    max_height = input('Please input the max_height:')
-    create_test_data(input_path, output_path, int(max_height))
-    test(output_path, result_path)
+    create_test_data(input_path, output_path)
+    use_time = test(output_path, result_path)
+    print('处理' + str(image_count) + '张图片用时为' + str(use_time // 3600) + '小时:' +
+          str(use_time % 3600 // 60) + '分:' + str(use_time % 60) + '秒')
     print('--------------end-----------------')
