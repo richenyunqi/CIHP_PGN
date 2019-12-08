@@ -82,9 +82,9 @@ def create_black_image(image_name, output_path, width, height):
         output_image_dir_path = output_path + dirn
         if os.path.exists(output_image_dir_path) == False:
             os.mkdir(output_image_dir_path)
-        black_image_resize_output(
-            'C:/Users/jf/Desktop/human/CIHP_PGN/datasets/CIHP/edges/0026375.png',
-            output_image_dir_path + '/' + image_name, width, height)
+        black_image_resize_output('./datasets/CIHP/edges/0026375.png',
+                                  output_image_dir_path + '/' + image_name,
+                                  width, height)
 
 
 def create_list(images_path):
@@ -103,12 +103,8 @@ def create_tool(output_path):
     output_path = output_path + '/tool'
     if os.path.exists(output_path) == False:
         os.mkdir(output_path)
-    shutil.copy(
-        'C:/Users/jf/Desktop/human/CIHP_PGN/datasets/CIHP/tool/reverse_label.m',
-        output_path)
-    shutil.copy(
-        'C:/Users/jf/Desktop/human/CIHP_PGN/datasets/CIHP/tool/write_edge.m',
-        output_path)
+    shutil.copy('./datasets/CIHP/tool/reverse_label.m', output_path)
+    shutil.copy('./datasets/CIHP/tool/write_edge.m', output_path)
 
 
 def create_test_data(input_path, output_path):
@@ -133,15 +129,12 @@ def create_test_data(input_path, output_path):
 def test(test_data_path, result_path):
     print('test ' + test_data_path)
     test_data = Test(test_data_path)
-    start = time()
     test_data.main()
-    stop = time()
     print('copy images')
     copy_images(test_data.DATA_DIR, result_path)
     print('create binary images')
     create_binary_png(result_path)
     create_combine_png(result_path)
-    return stop - start
 
 
 # 这里没有办法进行多次test，因为n_classes
@@ -220,8 +213,11 @@ if __name__ == '__main__':
     input_path = input('Please input the input_path: ')
     output_path = input('Please input the output_path: ')
     result_path = input('Please input the result_path: ')
+    start = time()
     create_test_data(input_path, output_path)
-    use_time = test(output_path, result_path)
+    test(output_path, result_path)
+    stop = time()
+    use_time = stop - start
     print('处理' + str(image_count) + '张图片用时为' + str(use_time // 3600) + '小时:' +
           str(use_time % 3600 // 60) + '分:' + str(use_time % 60) + '秒')
     print('--------------end-----------------')
