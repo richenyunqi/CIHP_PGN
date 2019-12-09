@@ -7,7 +7,7 @@ import cv2
 from my_test_pgn import Test
 from write_txt import *
 from time import time
-
+from circle import detect_circle
 image_count = 0
 
 
@@ -18,7 +18,7 @@ def imwrite_png(img, output_path):
     cv2.imwrite(output_path, img)
 
 
-#调整大小、翻转、写入
+# 调整大小、翻转、写入
 # def image_resize_output(image_path, output_path, max_height):
 #     image_name = os.path.split(image_path)[1]
 #     img = cv2.imread(image_path)
@@ -42,7 +42,7 @@ def imwrite_png(img, output_path):
 #     print('output ' + output_path)
 #     return new_width, new_height
 
-#写入
+# 写入
 # def image_resize_output(image_path, output_path, max_height):
 #     image_name = os.path.split(image_path)[1]
 #     img = cv2.imread(image_path)
@@ -52,7 +52,7 @@ def imwrite_png(img, output_path):
 #     return width, height
 
 
-#调整大小、写入
+# 调整大小、写入
 def image_resize_output(image_path, output_path):
     global image_count
     image_count += 1
@@ -60,8 +60,9 @@ def image_resize_output(image_path, output_path):
     image_name = file_path[1]
     dir_name = os.path.split(file_path[0])[1]
     img = cv2.imread(image_path)
+    img = detect_circle(img)
     height, width = img.shape[:2]
-    new_height = 1000
+    new_height = 600
     new_width = int(new_height * width / height)
     new_img = cv2.resize(img, (new_width, new_height))
     imwrite_png(new_img, output_path + '/' + dir_name + '_' + image_name)
@@ -167,7 +168,6 @@ def create_binary_png(result_path):
                     if img[i, j, 0] != 0 or img[i, j, 1] != 0 or img[i, j,
                                                                      2] != 0:
                         img[i, j] = (255, 255, 255)
-            # img = cv2.resize(img, (3456, 5184))
             cv2.imwrite(result_path + '/' + n.replace('_vis', '_binary'), img)
             print('create ' + result_path + '/' + n.replace('_vis', '_binary'))
 
@@ -183,7 +183,6 @@ def create_combine_png(result_path):
                     if img1[i, j, 0] == 0 and img1[i, j, 1] == 0 and img1[
                             i, j, 2] == 0:
                         img2[i, j] = (0, 0, 0)
-            # img = cv2.resize(img, (3456, 5184))
             cv2.imwrite(result_path + '/' + n.replace('_binary', '_combine'),
                         img2)
             print('create ' + result_path + '/' +
@@ -193,7 +192,6 @@ def create_combine_png(result_path):
 def copy_images(DATA_DIR, result_path):
     names = os.listdir(DATA_DIR + '/images/')
     for n in names:
-        # image_resize_output(DATA_DIR + '/images/' + n, result_path, 3456, 5184)
         shutil.copy(DATA_DIR + '/images/' + n, result_path)
         print('copy ' + DATA_DIR + '/images/' + n, result_path)
     names = os.listdir('./output/cihp_parsing_maps/')
@@ -210,11 +208,15 @@ def copy_images(DATA_DIR, result_path):
 
 
 if __name__ == '__main__':
-    input_path = input('Please input the input_path: ')
+    # input_path = input('Please input the input_path: ')
     output_path = input('Please input the output_path: ')
     result_path = input('Please input the result_path: ')
+    # if os.path.exists(output_path):
+    #     shutil.rmtree(output_path, True)
+    #     if not os.path.exists(output_path):
+    #         os.mkdir(output_path)
     start = time()
-    create_test_data(input_path, output_path)
+    # create_test_data(input_path, output_path)
     test(output_path, result_path)
     stop = time()
     use_time = stop - start
