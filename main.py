@@ -1,13 +1,15 @@
 import os
 import shutil
 import sys
+from time import time
 
 import cv2
 
 from my_test_pgn import Test
-from write_txt import *
-from time import time
 from circle import detect_circle
+from trans_rgb import trans_background_bgr, trans_mark_bgr
+from write_txt import *
+
 image_count = 0
 
 
@@ -52,6 +54,13 @@ def imwrite_png(img, output_path):
 #     return width, height
 
 
+def trans_bgr(img):
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            # trans_mark_bgr(img, i, j)
+            trans_background_bgr(img, i, j)
+
+
 # 调整大小、写入
 def image_resize_output(image_path, output_path):
     global image_count
@@ -60,11 +69,13 @@ def image_resize_output(image_path, output_path):
     image_name = file_path[1]
     dir_name = os.path.split(file_path[0])[1]
     img = cv2.imread(image_path)
-    img = detect_circle(img)
+    # img = detect_circle(img)
     height, width = img.shape[:2]
     new_height = 600
     new_width = int(new_height * width / height)
     new_img = cv2.resize(img, (new_width, new_height))
+    trans_bgr(new_img)
+    # new_img = detect_circle(new_img)
     imwrite_png(new_img, output_path + '/' + dir_name + '_' + image_name)
     print('output ' + output_path)
     return new_width, new_height
@@ -115,6 +126,8 @@ def create_test_data(input_path, output_path):
         if os.path.isdir(input_path + '/' + name):
             create_test_data(input_path + '/' + name, output_path)
         else:
+            if not os.path.exists(output_path):
+                os.mkdir(output_path)
             if os.path.exists(output_path + '/images') == False:
                 os.mkdir(output_path + '/images')
             width, height = image_resize_output(input_path + '/' + name,
@@ -189,6 +202,14 @@ def create_combine_png(result_path):
                   n.replace('_binary', '_combine'))
 
 
+def delete_blue(img):
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            if img[i, j, 0] == 221 and img[i, j, 1] == 119 and img[i, j,
+                                                                   2] == 0:
+                img[i, j] = (0, 0, 0)
+
+
 def copy_images(DATA_DIR, result_path):
     names = os.listdir(DATA_DIR + '/images/')
     for n in names:
@@ -198,25 +219,19 @@ def copy_images(DATA_DIR, result_path):
     for n in names:
         if n.find('.png') != -1 and n.find('_vis') != -1:
             img = cv2.imread('./output/cihp_parsing_maps/' + n)
-            for i in range(img.shape[0]):
-                for j in range(img.shape[1]):
-                    if img[i, j, 0] == 221 and img[i, j, 1] == 119 and img[
-                            i, j, 2] == 0:
-                        img[i, j] = (0, 0, 0)
+            delete_blue(img)
             cv2.imwrite(result_path + '/' + n, img)
             print('copy ' + './output/cihp_parsing_maps/' + n, result_path)
 
 
 if __name__ == '__main__':
-    # input_path = input('Please input the input_path: ')
-    output_path = input('Please input the output_path: ')
-    result_path = input('Please input the result_path: ')
-    # if os.path.exists(output_path):
-    #     shutil.rmtree(output_path, True)
-    #     if not os.path.exists(output_path):
-    #         os.mkdir(output_path)
+    input_path = 'G:/20191202_human'
+    output_path = 'G:/human/CIHP_PGN/datasets/output'
+    result_path = 'G:/result/PGN_trans_rgb'
+    if os.path.exists(output_path):
+        shutil.rmtree(output_path, True)
     start = time()
-    # create_test_data(input_path, output_path)
+    create_test_data(input_path, output_path)
     test(output_path, result_path)
     stop = time()
     use_time = stop - start
