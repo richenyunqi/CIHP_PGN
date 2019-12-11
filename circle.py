@@ -15,9 +15,9 @@ def bfs(img, x, y, direction, r):
         for ii, jj in direction:
             if ii + i >= 0 and ii + i < height and jj + j >= 0 and jj + j < width and not (
                     ii + i,
-                    jj + j) in visit and (img[i + ii, j + jj, 0] < 30
-                                          and img[i + ii, j + jj, 1] < 30
-                                          and img[i + ii, j + jj, 2] < 30):
+                    jj + j) in visit and (img[i + ii, j + jj, 0] < 60
+                                          and img[i + ii, j + jj, 1] < 60
+                                          and img[i + ii, j + jj, 2] < 60):
                 q.put((ii + i, jj + j))
                 visit.add((ii + i, jj + j))
                 if len(visit) > np.around(pi * r**2) * 1.5:
@@ -52,8 +52,8 @@ def detect_circle(image):
             visit = set([(y, x)])
             while not q.empty():
                 i, j = q.get()
-                if image[i, j, 0] < 30 and image[i, j, 1] < 30 and image[
-                        i, j, 2] < 30:
+                if image[i, j, 0] < 60 and image[i, j, 1] < 60 and image[
+                        i, j, 2] < 60:
                     f, v = bfs(image, i, j, direction, r)
                     if f:
                         for k in v:
@@ -95,8 +95,8 @@ def detect_circle_demo(image):
 
 
 if __name__ == '__main__':
-    images_path = 'C:/Users/jf/Desktop/test/1'
-    output_path = 'C:/Users/jf/Desktop/test/2'
+    images_path = 'G:/20191209/FRM_0108'
+    output_path = 'C:/Users/jf/Desktop/output'
     images_dir = os.listdir(images_path)
     for image in images_dir:
         src = cv2.imread(images_path + '/' + image)

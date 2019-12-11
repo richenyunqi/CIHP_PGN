@@ -3,7 +3,7 @@ import cv2
 
 
 def is_background(img, x, y):
-    return (all([img[x, y, i] > 150 for i in range(3)]) and all([
+    return (all([img[x, y, i] > 165 for i in range(3)]) and all([
         abs(int(img[x, y, i]) - img[x, y, (i + 1) % 3]) < 20 for i in range(3)
     ]))
 

@@ -125,7 +125,7 @@ def create_test_data(input_path, output_path):
     for name in images_names:
         if os.path.isdir(input_path + '/' + name):
             create_test_data(input_path + '/' + name, output_path)
-        else:
+        elif '.txt' not in name:
             if not os.path.exists(output_path):
                 os.mkdir(output_path)
             if os.path.exists(output_path + '/images') == False:
@@ -195,7 +195,7 @@ def create_combine_png(result_path):
                 for j in range(img1.shape[1]):
                     if img1[i, j, 0] == 0 and img1[i, j, 1] == 0 and img1[
                             i, j, 2] == 0:
-                        img2[i, j] = (0, 0, 0)
+                        img2[i, j] = (255, 255, 255)
             cv2.imwrite(result_path + '/' + n.replace('_binary', '_combine'),
                         img2)
             print('create ' + result_path + '/' +
@@ -225,9 +225,9 @@ def copy_images(DATA_DIR, result_path):
 
 
 if __name__ == '__main__':
-    input_path = 'G:/20191202_human'
+    input_path = 'G:/20191209_human_mark/test_mark'
     output_path = 'G:/human/CIHP_PGN/datasets/output'
-    result_path = 'G:/result/PGN_trans_rgb'
+    result_path = 'G:/result/20191209_mark'
     if os.path.exists(output_path):
         shutil.rmtree(output_path, True)
     start = time()
