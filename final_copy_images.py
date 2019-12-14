@@ -7,29 +7,19 @@ import cv2
 image_count = 0
 
 
-def imwrite_png(img, result_path):
-    paths = os.path.splitext(result_path)
-    if paths[1] != '.png':
-        result_path = paths[0] + '.png'
-    cv2.imwrite(result_path, img)
-
-
 #调整大小、写入
 def image_resize_output(image_path, result_path, original_image_path,
                         new_image_name):
     img = cv2.imread(image_path)
-    types = ['_binary', '_vis']
-    for t in types:
-        if new_image_name.find(t) != -1:
-            new_image_name = new_image_name.replace(t, '')
-    print('original: ' + original_image_path + '/' +
-          new_image_name.replace('.png', '.JPG'))
+    new_image_name = new_image_name.replace('_binary', '')
+    new_image_name = new_image_name.replace('_vis', '')
     original_height, original_width = cv2.imread(
-        original_image_path + '/' +
-        new_image_name.replace('.png', '.JPG')).shape[:2]
+        os.path.join(original_image_path,
+                     new_image_name[:-4] + '.JPG')).shape[:2]
     new_img = cv2.resize(img, (original_width, original_height))
-    imwrite_png(new_img, result_path + '/' + new_image_name)
-    print('output ' + result_path)
+    cv2.imwrite(os.path.join(result_path, new_image_name[:-4] + '.JPG'),
+                new_img)
+    print('output ' + os.path.join(result_path, new_image_name[:-4] + '.JPG'))
 
 
 def create_dir(path):
@@ -38,28 +28,13 @@ def create_dir(path):
         print('create ' + path)
     dirs = ['mask', 'cut', 'combine']
     for i in dirs:
-        if not os.path.exists(path + '/' + i):
-            os.mkdir(path + '/' + i)
-            print('create ' + path + '/' + i)
+        p = os.path.join(path, i)
+        if not os.path.exists(p):
+            os.mkdir(p)
+            print('create ' + p)
 
 
-def create_combine_png(original_image_path, mask_image_path, result_path):
-    global image_count
-    image_count += 1
-    img_original = cv2.imread(original_image_path)
-    img_mask = cv2.imread(mask_image_path)
-    for i in range(img_original.shape[0]):
-        for j in range(img_original.shape[1]):
-            if img_mask[i, j, 0] == 0 and img_mask[i, j, 1] == 0 and img_mask[
-                    i, j, 2] == 0:
-                img_original[i, j] = (0, 0, 0)
-    cv2.imwrite(result_path + '/' + os.path.split(mask_image_path)[1],
-                img_original)
-    print('create combine png: ' + result_path + '/' +
-          os.path.split(mask_image_path)[1])
-
-
-def create_dir_combine_png(original_path, result_path):
+def create_dir_combine_JPG(original_path, result_path):
     print(result_path)
     names = os.listdir(result_path)
     if 'mask' in names:
@@ -67,12 +42,18 @@ def create_dir_combine_png(original_path, result_path):
         combine_path = result_path + '/combine'
         names = os.listdir(mask_path)
         for name in names:
-            create_combine_png(
-                original_path + '/' + name.replace('.png', '.JPG'),
-                mask_path + '/' + name, combine_path)
+            original_img = cv2.imread(
+                os.path.join(original_path, name[:-4] + '.JPG'))
+            mask_img = cv2.imread(os.path.join(mask_path, name))
+            print('mask img: ' + os.path.join(mask_path, name))
+            combine_img = cv2.copyTo(original_img, mask_img)
+            cv2.imwrite(os.path.join(combine_path, name[:-4] + '.JPG'),
+                        combine_img)
+            print('create combine JPG: ' + result_path + '/' +
+                  os.path.join(combine_path, name[:-4] + '.JPG'))
     else:
         for name in names:
-            create_dir_combine_png(original_path + '/' + name,
+            create_dir_combine_JPG(original_path + '/' + name,
                                    result_path + '/' + name)
 
 
@@ -81,27 +62,26 @@ def copy_images(input_path, result_path, original_image_path):
     names = os.listdir(input_path)
     dir_str = {'_binary': 'mask', '_vis': 'cut'}
     for name in names:
-        if os.path.isfile(input_path + '/' + name):
-            s = name.split('_')
-            dir_name = s[0] + '_' + s[1]
+        if os.path.isfile(os.path.join(input_path, name)):
+            i = name.find('_', name.find('_') + 1)
+            dir_name = name[:i]
             create_dir(result_path + '/' + dir_name)
-            new_image_name = s[2]
-            for i in range(3, len(s)):
-                new_image_name += '_' + s[i]
+            new_image_name = name[i + 1:]
             for k, v in dir_str.items():
                 if name.find(k) != -1:
                     image_count += 1
-                    image_resize_output(input_path + '/' + name,
-                                        result_path + '/' + dir_name + '/' + v,
-                                        original_image_path + '/' + dir_name,
-                                        new_image_name)
+                    image_resize_output(
+                        os.path.join(input_path, name),
+                        os.path.join(os.path.join(result_path, dir_name), v),
+                        os.path.join(original_image_path, dir_name),
+                        new_image_name)
                     break
-    create_dir_combine_png(original_image_path, result_path)
+    create_dir_combine_JPG(original_image_path, result_path)
 
 
 if __name__ == '__main__':
     input_path = 'G:/result/20191209_9_groups'
-    result_path = 'G:/result/20191209'
+    result_path = 'G:/result/20191209_2'
     original_image_path = 'G:/20191209'
     start = time()
     copy_images(input_path, result_path, original_image_path)

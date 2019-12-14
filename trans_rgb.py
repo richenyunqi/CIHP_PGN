@@ -35,8 +35,8 @@ if __name__ == '__main__':
     images_path = 'C:/Users/jf/Desktop/1'
     images_dir = os.listdir(images_path)
     for image in images_dir:
-        img = cv2.imread(images_path + '/' + image)
-        print('read ' + images_path + '/' + image)
+        img = cv2.imread(os.path.join(images_path, image))
+        print('read ' + os.path.join(images_path, image))
         for i in range(img.shape[0]):
             for j in range(img.shape[1]):
                 trans_background_bgr(img, i, j)
