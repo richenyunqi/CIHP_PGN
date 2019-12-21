@@ -58,27 +58,49 @@ def create_inRange_png(result_path):
                 result_path, n.replace('_black', '_binary_black.png')))
 
 
+#黑色变白色
 def create_combine_png(result_path):
-    print(result_path)
     names = os.listdir(result_path)
-    for name in names:
-        if name.find('_binary') != -1:
-            original_img = cv2.imread(
-                os.path.join(result_path, name.replace('_binary', '')))
-            mask_img = cv2.imread(os.path.join(result_path, name))
-            combine_img = cv2.copyTo(original_img, mask_img)
+    for n in names:
+        if n.find('.png') != -1 and n.find('_binary') != -1:
+            img1 = cv2.imread(os.path.join(result_path, n))
+            img2 = cv2.imread(
+                os.path.join(result_path, n.replace('_binary', '')))
+            for i in range(img1.shape[0]):
+                for j in range(img1.shape[1]):
+                    if img1[i, j, 0] == 0 and img1[i, j, 1] == 0 and img1[
+                            i, j, 2] == 0:
+                        img2[i, j] = (255, 255, 255)
+                    elif 140 < img2[i, j, 0] < 160 and 140 < img2[
+                            i, j, 1] < 160 and 140 < img2[i, j, 2] < 160:
+                        img1[i, j] = (0, 0, 0)
+                        img2[i, j] = (255, 255, 255)
+            cv2.imwrite(os.path.join(result_path, n), img1)
             cv2.imwrite(
-                os.path.join(result_path, name.replace('_binary', '_black')),
-                combine_img)
-            print('create combine JPG: ' +
-                  os.path.join(result_path, name.replace('_binary', '_black')))
+                os.path.join(result_path, n.replace('_binary', '_combine')),
+                img2)
+            print('create ' +
+                  os.path.join(result_path, n.replace('_binary', '_combine')))
+            img2 = cv2.imread(
+                os.path.join(result_path, n.replace('_binary', '')))
+            for i in range(img1.shape[0]):
+                for j in range(img1.shape[1]):
+                    if img1[i, j, 0] != 0 or img1[i, j, 1] != 0 or img1[
+                            i, j, 2] != 0:
+                        img2[i, j] = (255, 255, 255)
+            cv2.imwrite(
+                os.path.join(result_path, n.replace('_binary', '_combine_2')),
+                img2)
+            print(
+                'create ' +
+                os.path.join(result_path, n.replace('_binary', '_combine_2')))
 
 
 if __name__ == '__main__':
-    result_path = 'C:/Users/jf/Desktop/10-2'
+    result_path = 'C:/Users/jf/Desktop/13-4'
     start = time()
-    create_binary_png(result_path)
-    # create_combine_png(result_path)
+    # create_binary_png(result_path)
+    create_combine_png(result_path)
     # create_inRange_png(result_path)
     stop = time()
     use_time = stop - start

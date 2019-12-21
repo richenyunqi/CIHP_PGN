@@ -36,6 +36,7 @@ def create_dir(path):
 
 def create_dir_combine_JPG(original_path, result_path):
     print(result_path)
+    global image_count
     names = os.listdir(result_path)
     if 'mask' in names:
         mask_path = result_path + '/mask'
@@ -51,6 +52,7 @@ def create_dir_combine_JPG(original_path, result_path):
                         combine_img)
             print('create combine JPG: ' + result_path + '/' +
                   os.path.join(combine_path, name[:-4] + '.JPG'))
+            image_count += 1
     else:
         for name in names:
             create_dir_combine_JPG(original_path + '/' + name,
@@ -58,6 +60,9 @@ def create_dir_combine_JPG(original_path, result_path):
 
 
 def copy_images(input_path, result_path, original_image_path):
+    if not os.path.exists(result_path):
+        os.mkdir(result_path)
+        print('create ' + result_path)
     global image_count
     names = os.listdir(input_path)
     dir_str = {'_binary': 'mask', '_vis': 'cut'}
@@ -80,8 +85,8 @@ def copy_images(input_path, result_path, original_image_path):
 
 
 if __name__ == '__main__':
-    input_path = 'G:/result/20191209_9_groups'
-    result_path = 'G:/result/20191209_2'
+    input_path = 'G:/result/original/20191209_9_groups'
+    result_path = 'G:/result/final/20191209_python'
     original_image_path = 'G:/20191209'
     start = time()
     copy_images(input_path, result_path, original_image_path)

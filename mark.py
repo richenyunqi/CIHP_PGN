@@ -21,9 +21,14 @@ def bfs(img, img_hat, x, y):
                 if (ii + i > 0 and img[ii + i - 1, jj + j] == 0
                         and img_hat[ii + i - 1, jj + j] == 0
                     ) or (ii + i < height - 1 and img[ii + i + 1, jj + j] == 0
-                          and img_hat[ii + i + 1, jj + j] == 0):
+                          and img_hat[ii + i + 1, jj + j] == 0) or (
+                              jj + j > 0 and img[ii + i, jj + j - 1] == 0
+                              and img_hat[ii + i, jj + j - 1] == 0) or (
+                                  jj + j < width - 1
+                                  and img[ii + i, jj + j + 1] == 0
+                                  and img_hat[ii + i, jj + j + 1] == 0):
                     flag = False
-    return flag and len(visit) < 150, visit
+    return flag and len(visit) < 200, visit
 
 
 def create_binary_png(result_path):
@@ -105,7 +110,7 @@ def create_combine_png(result_path):
 
 
 if __name__ == '__main__':
-    result_path = 'C:/Users/jf/Desktop/select'
+    result_path = 'C:/Users/jf/Desktop/13-4'
     create_binary_png(result_path)
     create_combine_png(result_path)
     # create_inRange_png(result_path)

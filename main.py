@@ -1,7 +1,7 @@
 import os
 import shutil
 from time import time
-
+import sys
 import cv2
 
 from my_test_pgn import Test
@@ -88,6 +88,8 @@ def create_tool(output_path):
 def create_test_data(input_path, output_path):
     images_names = os.listdir(input_path)
     print('Process ' + input_path)
+    if os.path.exists(output_path):
+        shutil.rmtree(output_path, True)
     if not os.path.exists(output_path):
         os.mkdir(output_path)
     for name in images_names:
@@ -109,6 +111,8 @@ def create_test_data(input_path, output_path):
 
 def test(test_data_path, result_path):
     print('test ' + test_data_path)
+    if os.path.exists(result_path):
+        shutil.rmtree(result_path, True)
     if not os.path.exists(result_path):
         os.mkdir(result_path)
     test_data = Test(test_data_path)
@@ -158,9 +162,14 @@ def bfs(img, img_hat, x, y):
                 if (ii + i > 0 and img[ii + i - 1, jj + j] == 0
                         and img_hat[ii + i - 1, jj + j] == 0
                     ) or (ii + i < height - 1 and img[ii + i + 1, jj + j] == 0
-                          and img_hat[ii + i + 1, jj + j] == 0):
+                          and img_hat[ii + i + 1, jj + j] == 0) or (
+                              jj + j > 0 and img[ii + i, jj + j - 1] == 0
+                              and img_hat[ii + i, jj + j - 1] == 0) or (
+                                  jj + j < width - 1
+                                  and img[ii + i, jj + j + 1] == 0
+                                  and img_hat[ii + i, jj + j + 1] == 0):
                     flag = False
-    return flag and len(visit) < 150, visit
+    return flag and len(visit) < 200, visit
 
 
 def create_binary_png(result_path):
@@ -232,16 +241,18 @@ def copy_images(DATA_DIR, result_path):
 
 
 if __name__ == '__main__':
-    input_path = 'G:/20191209_human_mark/13-4/FRM_0233'
-    output_path = 'G:/human/CIHP_PGN/datasets/output'
-    result_path = 'C:/Users/jf/Desktop/13-4'
-    if os.path.exists(output_path):
-        shutil.rmtree(output_path, True)
+    input_path = sys.argv[1]
+    output_path = sys.argv[2]
+    result_path = sys.argv[3]
+    time_path = './time.txt'
+    f = open(time_path, 'a')
+    names = os.listdir(input_path)
     start = time()
     create_test_data(input_path, output_path)
     test(output_path, result_path)
     stop = time()
     use_time = stop - start
-    print('处理' + str(image_count) + '张图片用时为' + str(use_time // 3600) + '小时:' +
-          str(use_time % 3600 // 60) + '分:' + str(use_time % 60) + '秒')
+    f.write('处理' + str(image_count) + '张图片用时为' + str(use_time // 3600) +
+            '小时:' + str(use_time % 3600 // 60) + '分:' + str(use_time % 60) +
+            '秒\n')
     print('--------------end-----------------')

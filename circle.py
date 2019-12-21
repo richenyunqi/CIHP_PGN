@@ -95,12 +95,13 @@ def detect_circle_demo(image):
 
 
 if __name__ == '__main__':
-    images_path = 'G:/20191209/FRM_0108'
-    output_path = 'C:/Users/jf/Desktop/output'
+    images_path = 'C:/Users/jf/Desktop/1'
+    output_path = 'C:/Users/jf/Desktop/2'
     images_dir = os.listdir(images_path)
     for image in images_dir:
         src = cv2.imread(images_path + '/' + image)
         src_circle = cv2.imread(images_path + '/' + image)
-        cv2.imwrite(output_path + '/' + image, detect_circle(src))
+        cv2.imwrite(output_path + '/' + image.replace('.JPG', '_2.JPG'),
+                    detect_circle(src))
         cv2.imwrite(output_path + '/' + image.replace('.JPG', '_circle.JPG'),
                     detect_circle_demo(src_circle))
