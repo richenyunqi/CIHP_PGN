@@ -21,6 +21,40 @@ def trans_bgr(img):
             trans_background_bgr(img, i, j)
 
 
+#调整大小、翻转、写入
+# def image_resize_output(image_path, output_path, max_height):
+#     image_name = os.path.split(image_path)[1]
+#     img = cv2.imread(image_path)
+#     height, width = img.shape[:2]
+#     new_width = 0
+#     new_height = 0
+#     if height >= width:
+#         new_height = max_height
+#         new_width = int(width * max_height / height)
+#         new_img = cv2.resize(img, (new_width, new_height))
+
+#         imwrite_png(new_img, output_path + '/' + image_name)
+#     else:
+#         new_width = max_height
+#         new_height = int(height * max_height / width)
+#         new_img = cv2.resize(img, (new_width, new_height))
+#         new_img = cv2.flip(new_img, 0)
+#         new_img = cv2.transpose(new_img)
+#         imwrite_png(new_img, output_path + '/' + image_name)
+#         new_width, new_height = new_height, new_width
+#     print('output ' + output_path)
+#     return new_width, new_height
+
+#写入
+# def image_resize_output(image_path, output_path, max_height):
+#     image_name = os.path.split(image_path)[1]
+#     img = cv2.imread(image_path)
+#     height, width = img.shape[:2]
+#     imwrite_png(img, output_path + '/' + image_name)
+#     print('output ' + output_path)
+#     return width, height
+
+
 # 调整大小、写入
 def image_resize_output(image_path, output_path):
     global image_count
@@ -31,6 +65,11 @@ def image_resize_output(image_path, output_path):
     img = cv2.imread(image_path)
     # img = detect_circle(img)
     height, width = img.shape[:2]
+    # if height == 3456 and width == 5184:
+    #     img = cv2.flip(img, 0)
+    #     img = cv2.transpose(img)
+    #     cv2.imwrite(image_path, img)
+    #     height, width = width, height
     new_height = 400
     new_width = int(new_height * width / height)
     if height > width:
@@ -252,7 +291,7 @@ if __name__ == '__main__':
     test(output_path, result_path)
     stop = time()
     use_time = stop - start
-    f.write('处理' + str(image_count) + '张图片用时为' + str(use_time // 3600) +
-            '小时:' + str(use_time % 3600 // 60) + '分:' + str(use_time % 60) +
-            '秒\n')
+    f.write('处理' + input_path + '中的' + str(image_count) + '张图片用时为' +
+            str(use_time // 3600) + '小时:' + str(use_time % 3600 // 60) + '分:' +
+            str(use_time % 60) + '秒\n')
     print('--------------end-----------------')
