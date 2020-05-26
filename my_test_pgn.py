@@ -11,7 +11,9 @@ import cv2
 import numpy as np
 import scipy.io as sio
 import scipy.misc
+
 import tensorflow as tf
+
 from PIL import Image
 
 from utils import *

@@ -65,8 +65,8 @@ def image_resize_output(image_path, output_path):
     img = cv2.imread(image_path)
     # img = detect_circle(img)
     height, width = img.shape[:2]
-    # if height == 3456 and width == 5184:
-    #     img = cv2.flip(img, 0)
+    # if 'B11_' in image_path or 'C10_' in image_path:
+    #     img = cv2.flip(img, 1)
     #     img = cv2.transpose(img)
     #     cv2.imwrite(image_path, img)
     #     height, width = width, height
@@ -127,8 +127,8 @@ def create_tool(output_path):
 def create_test_data(input_path, output_path):
     images_names = os.listdir(input_path)
     print('Process ' + input_path)
-    if os.path.exists(output_path):
-        shutil.rmtree(output_path, True)
+    # if os.path.exists(output_path):
+    #     shutil.rmtree(output_path, True)
     if not os.path.exists(output_path):
         os.mkdir(output_path)
     for name in images_names:
@@ -243,8 +243,9 @@ def create_combine_png(result_path):
                 os.path.join(result_path, n.replace('_binary', '')))
             for i in range(img1.shape[0]):
                 for j in range(img1.shape[1]):
-                    if img1[i, j, 0] == 0 and img1[i, j, 1] == 0 and img1[
-                            i, j, 2] == 0:
+                    if img1[i, j, 0] == 0 and img1[i, j,
+                                                   1] == 0 and img1[i, j,
+                                                                    2] == 0:
                         img2[i, j] = (255, 255, 255)
             cv2.imwrite(
                 os.path.join(result_path, n.replace('_binary', '_combine')),
@@ -255,8 +256,9 @@ def create_combine_png(result_path):
                 os.path.join(result_path, n.replace('_binary', '')))
             for i in range(img1.shape[0]):
                 for j in range(img1.shape[1]):
-                    if img1[i, j, 0] != 0 or img1[i, j, 1] != 0 or img1[
-                            i, j, 2] != 0:
+                    if img1[i, j, 0] != 0 or img1[i, j,
+                                                  1] != 0 or img1[i, j,
+                                                                  2] != 0:
                         img2[i, j] = (255, 255, 255)
             cv2.imwrite(
                 os.path.join(result_path, n.replace('_binary', '_combine_2')),
@@ -280,18 +282,21 @@ def copy_images(DATA_DIR, result_path):
 
 
 if __name__ == '__main__':
-    input_path = sys.argv[1]
-    output_path = sys.argv[2]
-    result_path = sys.argv[3]
+    input_path = 'F:/human/data/20200117'
+    output_path = 'G:/program/CIHP_PGN/datasets/20200117'
+    result_path = 'F:/human/result/original/20200117'
     time_path = './time.txt'
-    f = open(time_path, 'a')
-    names = os.listdir(input_path)
-    start = time()
-    create_test_data(input_path, output_path)
-    test(output_path, result_path)
-    stop = time()
-    use_time = stop - start
-    f.write('处理' + input_path + '中的' + str(image_count) + '张图片用时为' +
-            str(use_time // 3600) + '小时:' + str(use_time % 3600 // 60) + '分:' +
-            str(use_time % 60) + '秒\n')
-    print('--------------end-----------------')
+    with open(time_path, 'a') as f:
+        # names = os.listdir(input_path)
+        start = time()
+        create_test_data(input_path, output_path)
+        test(output_path, result_path)
+        stop = time()
+        use_time = stop - start
+        print('处理' + input_path + '中的' + str(image_count) + '张图片用时为' +
+              str(use_time // 3600) + '小时:' + str(use_time % 3600 // 60) +
+              '分:' + str(use_time % 60) + '秒')
+        f.write('处理' + input_path + '中的' + str(image_count) + '张图片用时为' +
+                str(use_time // 3600) + '小时:' + str(use_time % 3600 // 60) +
+                '分:' + str(use_time % 60) + '秒\n')
+        print('--------------end-----------------')
