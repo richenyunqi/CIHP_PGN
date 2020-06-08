@@ -37,8 +37,8 @@ def copy_images(input_path, result_path):
 
 
 if __name__ == '__main__':
-    input_path = 'C:/Users/jf/Desktop/terrible'
-    result_path = 'F:/human/result/original/20200114'
+    input_path = 'F:/human/result/terrible/20200117'
+    result_path = 'F:/human/result/original/20200117'
     create_mask_png(input_path)
     copy_images(input_path, result_path)
     print('--------------end-----------------')

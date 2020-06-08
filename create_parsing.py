@@ -46,7 +46,7 @@ def create_parsing_png(input_path):
 
 
 if __name__ == '__main__':
-    input_path = 'F:\\human\\result\\original\\20200114'
+    input_path = 'F:\\human\\result\\original\\20200117'
     start = time()
     create_parsing_png(input_path)
     stop = time()

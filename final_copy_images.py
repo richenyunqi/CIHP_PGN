@@ -3,7 +3,8 @@ import shutil
 import sys
 from time import time
 import cv2
-
+import create_mask
+from create_parsing import create_parsing_png
 image_count = 0
 
 
@@ -91,10 +92,14 @@ def copy_images(input_path, result_path, original_image_path):
 
 
 if __name__ == '__main__':
-    input_path = 'F:/human/result/original/20200114'
-    result_path = 'F:/human/result/final/20200114'
-    original_image_path = 'F:/human/data/20200114'
+    terrible_path = 'F:/human/result/terrible/20200102'
+    input_path = 'F:/human/result/original/20200102'
+    result_path = 'F:/human/result/final/20200102'
+    original_image_path = 'F:/human/data/20200102'
     start = time()
+    create_mask.create_mask_png(terrible_path)
+    create_mask.copy_images(terrible_path, input_path)
+    create_parsing_png(input_path)
     copy_images(input_path, result_path, original_image_path)
     stop = time()
     use_time = stop - start
