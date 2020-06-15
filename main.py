@@ -282,14 +282,14 @@ def copy_images(DATA_DIR, result_path):
 
 
 if __name__ == '__main__':
-    input_path = 'F:/human/data/20200105'
-    output_path = 'G:/program/CIHP_PGN/datasets/20200100'
-    result_path = 'F:/human/result/original/20200100'
+    input_path = 'F:/human/data/20200108'
+    output_path = 'G:/program/CIHP_PGN/datasets/20200108'
+    result_path = 'F:/human/result/original/20200108'
     time_path = './time.txt'
     with open(time_path, 'a') as f:
         # names = os.listdir(input_path)
         start = time()
-        # create_test_data(input_path, output_path)
+        create_test_data(input_path, output_path)
         test(output_path, result_path)
         stop = time()
         use_time = stop - start
