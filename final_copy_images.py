@@ -92,10 +92,10 @@ def copy_images(input_path, result_path, original_image_path):
 
 
 if __name__ == '__main__':
-    terrible_path = 'F:/human/result/terrible/20200105'
-    input_path = 'F:/human/result/original/20200105'
-    result_path = 'F:/human/result/final/20200105'
-    original_image_path = 'F:/human/data/20200105'
+    terrible_path = 'F:/human/result/terrible/20200108'
+    input_path = 'F:/human/result/original/20200108'
+    result_path = 'F:/human/result/final/20200108'
+    original_image_path = 'F:/human/data/20200108'
     start = time()
     create_mask.create_mask_png(terrible_path)
     create_mask.copy_images(terrible_path, input_path)

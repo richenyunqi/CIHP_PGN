@@ -23,7 +23,9 @@ def statics(terrible_path):
         print(n, ':', '{M:', terrible_M, original_M,
               terrible_M / original_M if original_M != 0 else math.inf,
               '},{W:', terrible_W, original_W,
-              terrible_W / original_W if original_W != 0 else math.inf, '}')
+              terrible_W / original_W if original_W != 0 else math.inf,
+              '},Total:{', terrible_M + terrible_W, original_M + original_W,
+              (terrible_M + terrible_W) / (original_M + original_W), '}')
 
 
 if __name__ == '__main__':

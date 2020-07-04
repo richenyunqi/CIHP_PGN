@@ -10,7 +10,7 @@ image_count = 0
 def copy_images(input_path, output_path):
     print(output_path)
     if not os.path.exists(output_path):
-        os.mkdir(output_path)
+        os.makedirs(output_path)
         print('create ' + output_path)
     global image_count
     names = os.listdir(input_path)
@@ -25,8 +25,8 @@ def copy_images(input_path, output_path):
 
 if __name__ == '__main__':
     start = time()
-    start_path = input('输入盘符：')
-    output_path = input('输出路径：')
+    start_path = 'p'
+    output_path = 'F:\\human\\data\\20200116'
     with open('./input.txt', 'r') as f:
         for path in f.readlines():
             path = path.rstrip('\n')

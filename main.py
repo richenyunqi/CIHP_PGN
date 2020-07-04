@@ -243,9 +243,8 @@ def create_combine_png(result_path):
                 os.path.join(result_path, n.replace('_binary', '')))
             for i in range(img1.shape[0]):
                 for j in range(img1.shape[1]):
-                    if img1[i, j, 0] == 0 and img1[i, j,
-                                                   1] == 0 and img1[i, j,
-                                                                    2] == 0:
+                    if img1[i, j, 0] == 0 and img1[i, j, 1] == 0 and img1[
+                            i, j, 2] == 0:
                         img2[i, j] = (255, 255, 255)
             cv2.imwrite(
                 os.path.join(result_path, n.replace('_binary', '_combine')),
@@ -256,9 +255,8 @@ def create_combine_png(result_path):
                 os.path.join(result_path, n.replace('_binary', '')))
             for i in range(img1.shape[0]):
                 for j in range(img1.shape[1]):
-                    if img1[i, j, 0] != 0 or img1[i, j,
-                                                  1] != 0 or img1[i, j,
-                                                                  2] != 0:
+                    if img1[i, j, 0] != 0 or img1[i, j, 1] != 0 or img1[
+                            i, j, 2] != 0:
                         img2[i, j] = (255, 255, 255)
             cv2.imwrite(
                 os.path.join(result_path, n.replace('_binary', '_combine_2')),
@@ -282,9 +280,9 @@ def copy_images(DATA_DIR, result_path):
 
 
 if __name__ == '__main__':
-    input_path = 'F:/human/data/20200108'
-    output_path = 'G:/program/CIHP_PGN/datasets/20200108'
-    result_path = 'F:/human/result/original/20200108'
+    input_path = 'F:/human/data/20200116'
+    output_path = 'G:/program/CIHP_PGN/datasets/20200116'
+    result_path = 'F:/human/result/original/20200116'
     time_path = './time.txt'
     with open(time_path, 'a') as f:
         # names = os.listdir(input_path)
