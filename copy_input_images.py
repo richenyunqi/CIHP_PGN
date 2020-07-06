@@ -26,7 +26,7 @@ def copy_images(input_path, output_path):
 if __name__ == '__main__':
     start = time()
     start_path = 'p'
-    output_path = 'F:\\human\\data\\20200116'
+    output_path = 'F:\\human\\data\\20200112'
     with open('./input.txt', 'r') as f:
         for path in f.readlines():
             path = path.rstrip('\n')
