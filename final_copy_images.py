@@ -26,13 +26,13 @@ def image_resize_output(image_path, result_path, original_image_path,
 
 def create_dir(path, dir_name):
     if not os.path.exists(path):
-        os.mkdir(path)
+        os.makedirs(path)
         print('create ' + path)
-    dirs = ['MASK', 'COMBINE', 'PARSING']
+    dirs = ['MASK', 'COMBINE', 'PARSING', 'ORIGINAL_PARSING']
     for i in dirs:
         p = os.path.join(path, dir_name + '_' + i)
         if not os.path.exists(p):
-            os.mkdir(p)
+            os.makedirs(p)
             print('create ' + p)
 
 
@@ -64,7 +64,7 @@ def create_dir_combine_JPG(original_path, result_path):
 
 def copy_images(input_path, result_path, original_image_path):
     if not os.path.exists(result_path):
-        os.mkdir(result_path)
+        os.makedirs(result_path)
         print('create ' + result_path)
     global image_count
     names = os.listdir(input_path)
@@ -76,7 +76,7 @@ def copy_images(input_path, result_path, original_image_path):
             create_dir(result_path + '/' + dir_name, dir_name)
             new_image_name = name[i + 1:]
             for k, v in dir_str.items():
-                if name.find(k) != -1:
+                if k in name:
                     image_count += 1
                     image_resize_output(
                         os.path.join(input_path, name),
@@ -85,6 +85,12 @@ def copy_images(input_path, result_path, original_image_path):
                         os.path.join(original_image_path, dir_name),
                         new_image_name)
                     break
+            if '_vis.png' in name:
+                shutil.copyfile(
+                    os.path.join(input_path, name),
+                    os.path.join(result_path, dir_name,
+                                 dir_name + '_ORIGINAL_PARSING',
+                                 new_image_name.replace('_vis.png', '.png')))
         else:
             copy_images(os.path.join(input_path, name), result_path,
                         original_image_path)
@@ -93,13 +99,13 @@ def copy_images(input_path, result_path, original_image_path):
 
 if __name__ == '__main__':
     terrible_path = 'F:/human/result/terrible/20200116'
-    input_path = 'F:/human/result/original/20200116'
-    result_path = 'F:/human/result/final/20200116'
-    original_image_path = 'F:/human/data/20200116'
+    input_path = 'C:/Users/jf/Desktop/original'
+    result_path = 'C:/Users/jf/Desktop/final/20200102'
+    original_image_path = 'F:/human/data/20200102'
     start = time()
-    create_mask.create_mask_png(terrible_path)
-    create_mask.copy_images(terrible_path, input_path)
-    create_parsing_png(input_path)
+    # create_mask.create_mask_png(terrible_path)
+    # create_mask.copy_images(terrible_path, input_path)
+    # create_parsing_png(input_path)
     copy_images(input_path, result_path, original_image_path)
     stop = time()
     use_time = stop - start
