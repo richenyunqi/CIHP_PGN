@@ -27,4 +27,5 @@ def statics(terrible_path):
 
 
 if __name__ == '__main__':
-    statics('F:/human/result/terrible')
+    # statics('F:/human/result/terrible')
+    print('{0:d}'.format(1))

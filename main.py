@@ -218,7 +218,7 @@ def create_binary_png(result_path):
             img = cv2.imread(os.path.join(result_path, n))
             gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             r, img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY)
-            kernal = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 15))
+            kernal = cv2.getStructuringElement(cv2.MORPH_RECT, (14, 14))
             img_hat = cv2.morphologyEx(img, cv2.MORPH_BLACKHAT, kernal)
             for i in range(img.shape[0]):
                 for j in range(img.shape[1]):
@@ -280,9 +280,9 @@ def copy_images(DATA_DIR, result_path):
 
 
 if __name__ == '__main__':
-    input_path = 'F:/human/data/20200112'
-    output_path = 'G:/program/CIHP_PGN/datasets/20200112'
-    result_path = 'F:/human/result/original/20200112'
+    input_path = 'F:/human/data/20200114'
+    output_path = 'G:/program/CIHP_PGN/datasets/20200114'
+    result_path = 'F:/human/result/original/20200114'
     time_path = './time.txt'
     with open(time_path, 'a') as f:
         # names = os.listdir(input_path)
