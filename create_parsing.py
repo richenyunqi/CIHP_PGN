@@ -3,6 +3,7 @@ import shutil
 import sys
 import cv2
 from time import time
+from trans_rgb import is_skin
 image_count = 0
 
 
@@ -15,12 +16,13 @@ def create_parsing_png(input_path):
         # if os.path.exists(os.path.join(input_path, n.replace('_vis',
         #                                                      '_vis2'))):
         #     continue
-        if '_vis.png' in n:
+        if '_vis.png' in n and '_vis2' not in n:
             image_count += 1
             img = cv2.imread(input_path + '/' + n)
             mask_img = cv2.imread(input_path + '/' +
                                   n.replace('_vis', '_binary'))
-            original_img = cv2.imread(input_path + '/' + n.replace('_vis', ''))
+            original_img = cv2.imread(input_path + '/' +
+                                      n.replace('_vis', '_adata'))
             for i in range(img.shape[0]):
                 for j in range(img.shape[1]):
                     (b, g, r) = img[i, j]
@@ -33,20 +35,17 @@ def create_parsing_png(input_path):
                     elif parsing_rgb == (255, 0, 0) or parsing_rgb == (
                             128, 0, 0) or parsing_rgb == (0, 0, 255):
                         continue
-                    elif parsing_rgb in clothes_rgb or (
-                            parsing_rgb == (0, 0, 0)
-                            and not (ro > 70 and go > 40 and bo > 20
-                                     and int(ro) - int(go) >= 10
-                                     and int(go) - int(bo) >= 10)):
+                    elif (parsing_rgb in clothes_rgb or parsing_rgb ==
+                          (0, 0, 0)) and not is_skin(ro, go, bo):
                         img[i, j] = (0, 255, 0)  #衣服颜色
                     else:
                         img[i, j] = (128, 0, 128)  #皮肤颜色
             cv2.imwrite(input_path + '/' + n.replace('_vis', '_vis2'), img)
-            print('create ' + input_path + '/' + n)
+            print('create ' + input_path + '/' + n.replace('_vis', '_vis2'))
 
 
 if __name__ == '__main__':
-    input_path = 'F:\\human\\result\\original\\20200117'
+    input_path = 'C:\\Users\\jf\\Desktop\\c'
     start = time()
     create_parsing_png(input_path)
     stop = time()

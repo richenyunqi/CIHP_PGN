@@ -3,10 +3,10 @@ import shutil
 from time import time
 import sys
 import cv2
-
+from copy_input_images import copy_main
 from my_test_pgn import Test
 # from circle import detect_circle
-from trans_rgb import trans_background_bgr, trans_mark_bgr
+from trans_rgb import trans_background_bgr
 from write_txt import (write_image_list, write_train, write_train_id,
                        write_train_rev, write_val, write_val_id)
 import queue
@@ -21,61 +21,35 @@ def trans_bgr(img):
             trans_background_bgr(img, i, j)
 
 
-#调整大小、翻转、写入
-# def image_resize_output(image_path, output_path, max_height):
-#     image_name = os.path.split(image_path)[1]
-#     img = cv2.imread(image_path)
-#     height, width = img.shape[:2]
-#     new_width = 0
-#     new_height = 0
-#     if height >= width:
-#         new_height = max_height
-#         new_width = int(width * max_height / height)
-#         new_img = cv2.resize(img, (new_width, new_height))
-
-#         imwrite_png(new_img, output_path + '/' + image_name)
-#     else:
-#         new_width = max_height
-#         new_height = int(height * max_height / width)
-#         new_img = cv2.resize(img, (new_width, new_height))
-#         new_img = cv2.flip(new_img, 0)
-#         new_img = cv2.transpose(new_img)
-#         imwrite_png(new_img, output_path + '/' + image_name)
-#         new_width, new_height = new_height, new_width
-#     print('output ' + output_path)
-#     return new_width, new_height
-
-#写入
-# def image_resize_output(image_path, output_path, max_height):
-#     image_name = os.path.split(image_path)[1]
-#     img = cv2.imread(image_path)
-#     height, width = img.shape[:2]
-#     imwrite_png(img, output_path + '/' + image_name)
-#     print('output ' + output_path)
-#     return width, height
+# 调整大小
 
 
-# 调整大小、写入
-def image_resize_output(image_path, output_path):
-    global image_count
-    image_count += 1
-    file_path = os.path.split(image_path)
-    image_name = file_path[1]
-    dir_name = os.path.split(file_path[0])[1]
+def image_resize(image_path):
     img = cv2.imread(image_path)
     # img = detect_circle(img)
     height, width = img.shape[:2]
-    # if 'B11_' in image_path or 'C10_' in image_path:
-    #     img = cv2.flip(img, 1)
-    #     img = cv2.transpose(img)
-    #     cv2.imwrite(image_path, img)
-    #     height, width = width, height
     new_height = 400
     new_width = int(new_height * width / height)
     if height > width:
         new_width = 400
         new_height = int(new_width * height / width)
-    new_img = cv2.resize(img, (new_width, new_height))
+    return cv2.resize(img, (new_width, new_height)), new_width, new_height
+
+
+# 调整大小、写入
+def image_resize_output(image_path, output_path, result_path):
+    global image_count
+    image_count += 1
+    file_path = os.path.split(image_path)
+    image_name = file_path[1]
+    dir_name = os.path.split(file_path[0])[1]
+    new_img, new_width, new_height = image_resize(image_path)
+    cv2.imwrite(
+        os.path.join(result_path,
+                     dir_name + '_' + image_name[:-4] + '_adata.png'), new_img)
+    print('output ' +
+          os.path.join(result_path, dir_name + '_' + image_name[:-4] +
+                       '_adata.png'))
     trans_bgr(new_img)
     # new_img = detect_circle(new_img)
     cv2.imwrite(
@@ -124,7 +98,7 @@ def create_tool(output_path):
     shutil.copy('./datasets/CIHP/tool/write_edge.m', output_path)
 
 
-def create_test_data(input_path, output_path):
+def create_test_data(input_path, output_path, result_path):
     images_names = os.listdir(input_path)
     print('Process ' + input_path)
     # if os.path.exists(output_path):
@@ -133,13 +107,14 @@ def create_test_data(input_path, output_path):
         os.mkdir(output_path)
     for name in images_names:
         if os.path.isdir(os.path.join(input_path, name)):
-            create_test_data(os.path.join(input_path, name), output_path)
+            create_test_data(os.path.join(input_path, name), output_path,
+                             result_path)
         elif '.txt' not in name:
             if not os.path.exists(output_path + '/images'):
                 os.mkdir(output_path + '/images')
             width, height = image_resize_output(
                 os.path.join(input_path, name),
-                os.path.join(output_path, 'images'))
+                os.path.join(output_path, 'images'), result_path)
             create_black_image(
                 os.path.split(input_path)[1] + '_' + name, output_path, width,
                 height)
@@ -150,10 +125,7 @@ def create_test_data(input_path, output_path):
 
 def test(test_data_path, result_path):
     print('test ' + test_data_path)
-    if os.path.exists(result_path):
-        shutil.rmtree(result_path, True)
-    if not os.path.exists(result_path):
-        os.mkdir(result_path)
+
     test_data = Test(test_data_path)
     test_data.main()
     print('copy images')
@@ -284,10 +256,14 @@ if __name__ == '__main__':
     output_path = 'G:/program/CIHP_PGN/datasets/20200114'
     result_path = 'F:/human/result/original/20200114'
     time_path = './time.txt'
+    # copy_main(input_path)
+    if os.path.exists(result_path):
+        shutil.rmtree(result_path, True)
+    if not os.path.exists(result_path):
+        os.mkdir(result_path)
     with open(time_path, 'a') as f:
-        # names = os.listdir(input_path)
         start = time()
-        create_test_data(input_path, output_path)
+        create_test_data(input_path, output_path, result_path)
         test(output_path, result_path)
         stop = time()
         use_time = stop - start

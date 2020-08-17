@@ -1,10 +1,20 @@
 import os
 import shutil
-import sys
 from time import time
+from PIL.ExifTags import TAGS
+import os
+import pyexiv2 as ev
 import cv2
 
 image_count = 0
+
+
+def rotate_image_90(input_image_path, output_image_path):
+    img = cv2.imread(input_image_path)
+    img = cv2.flip(img, 0)
+    img = cv2.transpose(img)
+    cv2.imwrite(output_image_path, img)
+    print(output_image_path, 'has been rotated 90')
 
 
 def copy_images(input_path, output_path):
@@ -18,15 +28,20 @@ def copy_images(input_path, output_path):
         image_path = os.path.join(input_path, name)
         if os.path.isfile(image_path):
             image_count += 1
-            shutil.copyfile(image_path, os.path.join(output_path, name))
+            output_image_path = os.path.join(output_path, name)
+            exiv_image = ev.Image(image_path)
+            orientation = exiv_image.read_exif()['Exif.Image.Orientation']
+            if orientation == '1' and name[0] not in 'HN':
+                rotate_image_90(image_path, output_image_path)
+            else:
+                shutil.copyfile(image_path, output_image_path)
         else:
             print('错误！' + image_path + '是一个目录')
 
 
-if __name__ == '__main__':
+def copy_main(output_path):
     start = time()
     start_path = 'p'
-    output_path = 'F:\\human\\data\\20200114'
     with open('./input.txt', 'r') as f:
         for path in f.readlines():
             path = path.rstrip('\n')
@@ -38,6 +53,10 @@ if __name__ == '__main__':
             copy_images(input_images_path, output_images_path)
     stop = time()
     use_time = stop - start
-    print('处理' + str(image_count) + '张图片用时为' + str(use_time // 3600) + '小时:' +
+    print('拷贝' + str(image_count) + '张图片用时为' + str(use_time // 3600) + '小时:' +
           str(use_time % 3600 // 60) + '分:' + str(use_time % 60) + '秒')
     print('--------------end-----------------')
+
+
+if __name__ == '__main__':
+    copy_main('F:\\human\\data\\20200113')

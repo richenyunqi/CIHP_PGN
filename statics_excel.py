@@ -24,14 +24,14 @@ def statics(terrible_path):
         terrible_M = images_count('_M_', terrible_images_names) // 5
         terrible_W = images_count('_W_', terrible_images_names) // 5
         total_terrible_M += terrible_M
-        total_terrible_W += terrible_M
+        total_terrible_W += terrible_W
         final_images_names = os.listdir(final_dir_path)
         final_M = images_count('_M_', final_images_names) * 90
         final_W = images_count('_W_', final_images_names) * 90
         total_M += final_M
         total_W += final_W
         values.append([
-            n, terrible_M, final_M,
+            n.replace('2020', ''), terrible_M, final_M,
             str(round(terrible_M / final_M * 100, 2)) +
             '%' if final_M != 0 else 'inf', terrible_W, final_W,
             str(round(terrible_W / final_W * 100, 2)) +
