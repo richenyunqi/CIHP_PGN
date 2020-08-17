@@ -1,15 +1,19 @@
 import os
+import queue
 import shutil
-from time import time
 import sys
+from collections import deque
+from time import time
+
 import cv2
+
 from copy_input_images import copy_main
 from my_test_pgn import Test
 # from circle import detect_circle
-from trans_rgb import trans_background_bgr
+from trans_rgb import is_skin, trans_background_bgr
 from write_txt import (write_image_list, write_train, write_train_id,
                        write_train_rev, write_val, write_val_id)
-import queue
+
 image_count = 0
 
 
@@ -125,7 +129,6 @@ def create_test_data(input_path, output_path, result_path):
 
 def test(test_data_path, result_path):
     print('test ' + test_data_path)
-
     test_data = Test(test_data_path)
     test_data.main()
     print('copy images')
@@ -156,7 +159,29 @@ def test(test_data_path, result_path):
 #             test(test_data_path + '/' + name, new_dir)
 
 
-def bfs(img, img_hat, x, y):
+def bfs(adata_img, mask_img, x, y, visit, height, width):
+    q = deque([(x, y)])
+    visit.add((x, y))
+    bfs_visit = set()
+    bfs_visit.add((x, y))
+    mask_img[x, y] = 255
+    while q:
+        x, y = q.popleft()
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                if i + x < 0 or i + x >= height or j + y < 0 or j + y >= width or (
+                        i + x, j + y) in visit:
+                    continue
+                (b, g, r) = adata_img[i + x, j + y]
+                if mask_img[i + x, j + y] == 255 or is_skin(r, g, b):
+                    visit.add((i + x, j + y))
+                    bfs_visit.add((i + x, j + y))
+                    mask_img[i + x, j + y] = 255
+                    q.append((i + x, j + y))
+    return bfs_visit
+
+
+def bfs2(img, img_hat, x, y):
     visit = set([(x, y)])
     q = queue.Queue()
     q.put((x, y))
@@ -184,25 +209,46 @@ def bfs(img, img_hat, x, y):
 
 
 def create_binary_png(result_path):
-    names = os.listdir(result_path)
-    for n in names:
-        if n.find('.png') != -1 and n.find('_vis') != -1:
-            img = cv2.imread(os.path.join(result_path, n))
-            gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            r, img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY)
-            kernal = cv2.getStructuringElement(cv2.MORPH_RECT, (14, 14))
-            img_hat = cv2.morphologyEx(img, cv2.MORPH_BLACKHAT, kernal)
-            for i in range(img.shape[0]):
-                for j in range(img.shape[1]):
+    images_name = os.listdir(result_path)
+    for image_name in images_name:
+        if '_vis.png' in image_name:
+            mask_img = cv2.imread(os.path.join(result_path, image_name))
+            mask_img = cv2.cvtColor(mask_img, cv2.COLOR_BGR2GRAY)
+            r, mask_img = cv2.threshold(mask_img, 0, 255, cv2.THRESH_BINARY)
+            adata_img = cv2.imread(
+                os.path.join(result_path, image_name.replace('_vis',
+                                                             '_adata')))
+            height, width = mask_img.shape[:2]
+            visit = set()
+            for i in range(height):
+                for j in range(width):
+                    (b, g, r) = adata_img[i, j]
+                    if (i, j) in visit:
+                        continue
+                    if ((i == 0 or i == height - 1 or j == 0 or j == width - 1)
+                            and is_skin(r, g, b)) or mask_img[i, j] == 255:
+                        bfs_visit = bfs(adata_img, mask_img, i, j, visit,
+                                        height, width)
+                        if len(bfs_visit) < 30:
+                            for x, y in bfs_visit:
+                                mask_img[x, y] = 0
+            img_hat = cv2.morphologyEx(
+                mask_img, cv2.MORPH_BLACKHAT,
+                cv2.getStructuringElement(cv2.MORPH_RECT, (14, 14)))
+            for i in range(mask_img.shape[0]):
+                for j in range(mask_img.shape[1]):
                     if img_hat[i, j] != 0:
-                        flag, visit = bfs(img, img_hat, i, j)
+                        flag, bfs_visit = bfs2(mask_img, img_hat, i, j)
                         if flag:
-                            for x, y in visit:
-                                img[x, y] = 255
+                            for x, y in bfs_visit:
+                                mask_img[x, y] = 255
             cv2.imwrite(
-                os.path.join(result_path, n.replace('_vis', '_binary')), img)
-            print('create ' +
-                  os.path.join(result_path, n.replace('_vis', '_binary')))
+                os.path.join(result_path,
+                             image_name.replace('_vis', '_binary')), mask_img)
+            print(
+                'create',
+                os.path.join(result_path,
+                             image_name.replace('_vis', '_binary')))
 
 
 #黑色变白色
@@ -252,11 +298,13 @@ def copy_images(DATA_DIR, result_path):
 
 
 if __name__ == '__main__':
-    input_path = 'F:/human/data/20200114'
-    output_path = 'G:/program/CIHP_PGN/datasets/20200114'
-    result_path = 'F:/human/result/original/20200114'
+    input_path = 'F:/human/temp_result/data/20200117'
+    output_path = 'G:/program/CIHP_PGN/datasets/20200117'
+    result_path = 'F:/human/temp_result/result/original/20200117'
     time_path = './time.txt'
-    # copy_main(input_path)
+    copy_main(input_path)
+    if os.path.exists(output_path):
+        shutil.rmtree(output_path, True)
     if os.path.exists(result_path):
         shutil.rmtree(result_path, True)
     if not os.path.exists(result_path):

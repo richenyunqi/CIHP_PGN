@@ -5,7 +5,6 @@ from time import time
 import cv2
 import create_mask
 from create_parsing import create_parsing_png
-from t import fill_up_mask_image
 image_count = 0
 
 
@@ -98,31 +97,15 @@ def copy_images(input_path, result_path, original_image_path):
 
 
 if __name__ == '__main__':
-    # terrible_path = 'F:/human/result/terrible/20200111'
-    # input_path = 'F:/human/result/original/20200111'
-    # result_path = 'F:/human/result/final/20200111'
-    # original_image_path = 'F:/human/data/20200111'
-    # start = time()
-    # create_mask.create_mask_png(terrible_path)
-    # create_mask.copy_images(terrible_path, input_path)
-    # create_parsing_png(input_path)
-    # copy_images(input_path, result_path, original_image_path)
-    # stop = time()
-    # use_time = stop - start
-    # print('处理' + str(image_count) + '张图片用时为' + str(use_time // 3600) + '小时:' +
-    #       str(use_time % 3600 // 60) + '分:' + str(use_time % 60) + '秒')
-    # print('--------------end-----------------')
-    input_path = 'F:/human/result/original'
-    result_path = 'F:/human/result/final'
-    original_image_path = 'F:/human/data'
+    terrible_path = 'F:/human/temp_result/result/terrible/20200117'
+    input_path = 'F:/human/temp_result/result/original/20200117'
+    result_path = 'F:/human/temp_result/result/final/20200117'
+    original_image_path = 'F:/human/temp_result/data/20200117'
     start = time()
-    for dir_name in os.listdir(input_path):
-        input_dir_path = os.path.join(input_path, dir_name)
-        result_dir_path = os.path.join(result_path, dir_name)
-        original_dir_path = os.path.join(original_image_path, dir_name)
-        fill_up_mask_image(input_dir_path)
-        create_parsing_png(input_dir_path)
-        copy_images(input_dir_path, result_dir_path, original_dir_path)
+    create_mask.create_mask_png(terrible_path)
+    create_mask.copy_images(terrible_path, input_path)
+    create_parsing_png(input_path)
+    copy_images(input_path, result_path, original_image_path)
     stop = time()
     use_time = stop - start
     print('处理' + str(image_count) + '张图片用时为' + str(use_time // 3600) + '小时:' +

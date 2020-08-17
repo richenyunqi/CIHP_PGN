@@ -59,13 +59,12 @@ def bfs2(img, img_hat, x, y):
 def fill_up_mask_image(dir_path):
     images_name = os.listdir(dir_path)
     for image_name in images_name:
-        if '_binary.png' in image_name:
+        if '_vis.png' in image_name:
             mask_img = cv2.imread(os.path.join(dir_path, image_name))
             mask_img = cv2.cvtColor(mask_img, cv2.COLOR_BGR2GRAY)
             r, mask_img = cv2.threshold(mask_img, 0, 255, cv2.THRESH_BINARY)
             adata_img = cv2.imread(
-                os.path.join(dir_path, image_name.replace('_binary',
-                                                          '_adata')))
+                os.path.join(dir_path, image_name.replace('_vis', '_adata')))
             height, width = mask_img.shape[:2]
             visit = set()
             for i in range(height):
@@ -91,22 +90,20 @@ def fill_up_mask_image(dir_path):
                             for x, y in bfs_visit:
                                 mask_img[x, y] = 255
             cv2.imwrite(
-                os.path.join(dir_path,
-                             image_name.replace('_binary', '_binary')),
+                os.path.join(dir_path, image_name.replace('_vis', '_binary')),
                 mask_img)
             print(
                 'create',
-                os.path.join(dir_path,
-                             image_name.replace('_binary', '_binary')))
+                os.path.join(dir_path, image_name.replace('_vis', '_binary')))
 
 
 if __name__ == '__main__':
-    input_path = 'C:\\Users\\jf\\Desktop\\test'
+    input_path = 'C:/Users/jf/Desktop/test/result/original/20200112'
     start = time()
     fill_up_mask_image(input_path)
     stop = time()
     use_time = stop - start
-    # print('处理' + input_path + '中的' + str(image_count) + '张图片用时为' +
-    #       str(use_time // 3600) + '小时:' + str(use_time % 3600 // 60) + '分:' +
-    #       str(use_time % 60) + '秒')
-    # print('--------------end-----------------')
+    print('处理' + input_path + '中的' + str(image_count) + '张图片用时为' +
+          str(use_time // 3600) + '小时:' + str(use_time % 3600 // 60) + '分:' +
+          str(use_time % 60) + '秒')
+    print('--------------end-----------------')
