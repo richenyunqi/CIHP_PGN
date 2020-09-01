@@ -97,14 +97,18 @@ def copy_images(input_path, result_path, original_image_path):
 
 
 if __name__ == '__main__':
-    terrible_path = 'F:/human/temp_result/result/terrible/20200117'
-    input_path = 'F:/human/temp_result/result/original/20200117'
-    result_path = 'F:/human/temp_result/result/final/20200117'
-    original_image_path = 'F:/human/temp_result/data/20200117'
+    terrible_path = 'F:/human/temp_result/result/terrible/20200112'
+    input_path = 'F:/human/temp_result/result/original/20200112'
+    result_path = 'F:/human/temp_result/result/final/20200112'
+    original_image_path = 'F:/human/temp_result/data/20200112'
+    # terrible_path = 'F:/human/result/terrible/20200817'
+    # input_path = 'F:/human/result/original/20200817'
+    # result_path = 'F:/human/result/final/20200817'
+    # original_image_path = 'F:/human/data/20200817'
     start = time()
-    create_mask.create_mask_png(terrible_path)
-    create_mask.copy_images(terrible_path, input_path)
-    create_parsing_png(input_path)
+    # create_mask.create_mask_png(terrible_path)
+    # create_mask.copy_images(terrible_path, input_path)
+    # create_parsing_png(input_path)
     copy_images(input_path, result_path, original_image_path)
     stop = time()
     use_time = stop - start

@@ -117,4 +117,3 @@ if __name__ == '__main__':
     # copy_main()
     return_main('F:/human/result/ttt', 'F:/human/result/t',
                 'F:/human/result/jieguo')
-    # removeFiles('F:/human/result/temp')

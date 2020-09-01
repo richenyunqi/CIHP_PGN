@@ -298,9 +298,12 @@ def copy_images(DATA_DIR, result_path):
 
 
 if __name__ == '__main__':
-    input_path = 'F:/human/temp_result/data/20200117'
-    output_path = 'G:/program/CIHP_PGN/datasets/20200117'
-    result_path = 'F:/human/temp_result/result/original/20200117'
+    input_path = 'F:/human/temp_result/data/20200112'
+    output_path = 'G:/program/CIHP_PGN/datasets/20200112'
+    result_path = 'F:/human/temp_result/result/original/20200112'
+    # input_path = 'F:/human/data/20200817'
+    # output_path = 'G:/program/CIHP_PGN/datasets/20200817'
+    # result_path = 'F:/human/result/original/20200817'
     time_path = './time.txt'
     copy_main(input_path)
     if os.path.exists(output_path):
