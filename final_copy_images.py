@@ -97,19 +97,56 @@ def copy_images(input_path, result_path, original_image_path):
 
 
 if __name__ == '__main__':
-    terrible_path = 'F:/human/temp_result/result/terrible/20200112'
-    input_path = 'F:/human/temp_result/result/original/20200112'
-    result_path = 'F:/human/temp_result/result/final/20200112'
-    original_image_path = 'F:/human/temp_result/data/20200112'
-    # terrible_path = 'F:/human/result/terrible/20200817'
-    # input_path = 'F:/human/result/original/20200817'
-    # result_path = 'F:/human/result/final/20200817'
-    # original_image_path = 'F:/human/data/20200817'
-    start = time()
+    # terrible_path = 'F:/human/temp_result/result/terrible/20200903'
+    # input_path = 'F:/human/temp_result/result/original/20200903'
+    # result_path = 'F:/human/temp_result/result/final/20200903'
+    # # original_image_path = 'F:/human/temp_result/data/20200907'
+    # # terrible_path = 'F:/human/result/terrible/20200907'
+    # # input_path = 'F:/human/result/original/20200907'
+    # # result_path = 'F:/human/result/final/20200907'
+    # original_image_path = 'F:/human/data/20200903'
+    # start = time()
     # create_mask.create_mask_png(terrible_path)
     # create_mask.copy_images(terrible_path, input_path)
     # create_parsing_png(input_path)
-    copy_images(input_path, result_path, original_image_path)
+    # copy_images(input_path, result_path, original_image_path)
+    # stop = time()
+    # use_time = stop - start
+    # print('处理' + str(image_count) + '张图片用时为' + str(use_time // 3600) + '小时:' +
+    #       str(use_time % 3600 // 60) + '分:' + str(use_time % 60) + '秒')
+    # print('--------------end-----------------')
+
+    # inp = 'F:/human/result/terrible2'
+    # r = 'F:/human/result/final/'
+    # o = 'F:/human/data/'
+    # start = time()
+    # for i in [
+    #         '20200106', '20200107', '20200108', '20200109', '20200110',
+    #         '20200111'
+    # ]:
+    #     input_path = os.path.join(inp, i)
+    #     result_path = os.path.join(r, i)
+    #     original_image_path = os.path.join(o, i)
+    #     create_mask.create_mask_png(input_path)
+    #     create_parsing_png(input_path)
+    #     copy_images(input_path, result_path, original_image_path)
+    #     create_mask.copy_images(input_path,
+    #                             os.path.join('F:/human/result/original', i))
+    # stop = time()
+    # use_time = stop - start
+    # print('处理' + str(image_count) + '张图片用时为' + str(use_time // 3600) + '小时:' +
+    #       str(use_time % 3600 // 60) + '分:' + str(use_time % 60) + '秒')
+    # print('--------------end-----------------')
+    start = time()
+    for path in ['20200903']:
+        original_image_path = 'F:/human/data/' + path
+        terrible_path = 'F:/human/temp_result/result/terrible/' + path
+        input_path = 'F:/human/temp_result/result/original/' + path
+        result_path = 'F:/human/temp_result/result/final/' + path
+        # create_mask.create_mask_png(terrible_path)
+        # create_mask.copy_images(terrible_path, input_path)
+        # create_parsing_png(input_path)
+        copy_images(input_path, result_path, original_image_path)
     stop = time()
     use_time = stop - start
     print('处理' + str(image_count) + '张图片用时为' + str(use_time // 3600) + '小时:' +

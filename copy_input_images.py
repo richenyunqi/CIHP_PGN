@@ -36,21 +36,24 @@ def copy_images(input_path, output_path):
             else:
                 shutil.copyfile(image_path, output_image_path)
         else:
-            print('错误！' + image_path + '是一个目录')
+            os.makedirs(os.path.join(output_path, name))
+            copy_images(image_path, os.path.join(output_path, name))
 
 
-def copy_main(output_path):
+def copy_main(output_path, start_path='p'):
     start = time()
-    start_path = 'p'
-    with open('./input.txt', 'r') as f:
-        for path in f.readlines():
-            path = path.rstrip('\n')
-            p = path.split('_')
-            input_images_path = start_path + ':/' + p[
-                0] + '/' + 'data_four_pose/' + p[1] + '/' + p[2].lstrip(
-                    '0') + '/' + p[3] + '_' + p[4]
-            output_images_path = os.path.join(output_path, path)
-            copy_images(input_images_path, output_images_path)
+    if start_path == 'p':
+        with open('./input.txt', 'r') as f:
+            for path in f.readlines():
+                path = path.rstrip('\n')
+                p = path.split('_')
+                input_images_path = start_path + ':/' + p[
+                    0] + '/' + 'data_four_pose/' + p[1] + '/' + p[2].lstrip(
+                        '0') + '/' + p[3] + '_' + p[4]
+                output_images_path = os.path.join(output_path, path)
+                copy_images(input_images_path, output_images_path)
+    else:
+        copy_images(start_path, output_path)
     stop = time()
     use_time = stop - start
     print('拷贝' + str(image_count) + '张图片用时为' + str(use_time // 3600) + '小时:' +

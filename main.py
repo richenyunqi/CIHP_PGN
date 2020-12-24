@@ -132,7 +132,7 @@ def test(test_data_path, result_path):
     test_data = Test(test_data_path)
     test_data.main()
     print('copy images')
-    copy_images(test_data.DATA_DIR, result_path)
+    copy_images(test_data_path, result_path)
     print('create binary images')
     create_binary_png(result_path)
     create_combine_png(result_path)
@@ -298,21 +298,23 @@ def copy_images(DATA_DIR, result_path):
 
 
 if __name__ == '__main__':
-    input_path = 'F:/human/temp_result/data/20200112'
-    output_path = 'G:/program/CIHP_PGN/datasets/20200112'
-    result_path = 'F:/human/temp_result/result/original/20200112'
-    # input_path = 'F:/human/data/20200817'
-    # output_path = 'G:/program/CIHP_PGN/datasets/20200817'
-    # result_path = 'F:/human/result/original/20200817'
-    time_path = './time.txt'
-    copy_main(input_path)
+    input_path = 'F:/human/temp_result/data/20200907'm  
+    output_path = 'G:/program/CIHP_PGN/datasets/20200907'
+    result_path = 'F:/human/temp_result/result/original/20200907'
+    start_path = 'P:/20200907'
+    # input_path = 'F:/human/data/20200907'
+    # output_path = 'G:/program/CIHP_PGN/datasets/20200907'
+    # result_path = 'F:/human/result/original/20200907'
+    time_path = './time.txt' 
+    copy_main(input_path, start_path)
+    # copy_main(input_path)
     if os.path.exists(output_path):
         shutil.rmtree(output_path, True)
-    if os.path.exists(result_path):
+    if os.path.exists(result_path): 
         shutil.rmtree(result_path, True)
     if not os.path.exists(result_path):
         os.mkdir(result_path)
-    with open(time_path, 'a') as f:
+    with open(time_path, 'a') as f:  
         start = time()
         create_test_data(input_path, output_path, result_path)
         test(output_path, result_path)

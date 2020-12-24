@@ -3,7 +3,8 @@ import cv2
 
 
 def is_skin(r, g, b):
-    return r > 70 and g > 40 and b > 20 and int(r) - int(g) >= 10 and g > b
+    return r > 70 and g > 40 and b > 20 and int(r) - int(g) >= 10 and int(
+        g) - int(b) > 10
 
 
 def is_background(img, x, y):

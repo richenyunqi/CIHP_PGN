@@ -14,12 +14,7 @@ import cv2
 
 
 def copy_images(input_path, output_path, suffix):
-    print(output_path)
     images_num = 0
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
-        print('create ' + output_path)
-    global image_count
     names = os.listdir(input_path)
     for name in names:
         image_path = os.path.join(input_path, name)
@@ -36,30 +31,54 @@ def copy_images(input_path, output_path, suffix):
 
 
 def copy_main():
-    images_num = 0
     start = time()
-    start_path = 'F:/human/result'
-    start_data_path = 'F:/human/data'
-    output_path = os.path.join(start_path, 't')
+    images_num = 0
+    input_path = 'F:/human/result/final/20200102'
+    data_path = 'F:/human/data/20200102'
+    output_path = 'F:/human/result/temp'
     if not os.path.exists(output_path):
         os.makedirs(output_path)
-    with open('./input.txt', 'r') as f:
-        for path in f.readlines():
-            path = path.rstrip('\n')
-            p = path.split('_')
-            input_path = os.path.join(start_path, 'final', p[0], path)
-            input_data_path = os.path.join(start_data_path, p[0], path)
-            for i in ['MASK', 'COMBINE', 'PARSING']:
-                images_num += copy_images(
-                    os.path.join(input_path, path + '_' + i), output_path,
-                    path + '_' + i)
-            images_num += copy_images(input_data_path, output_path,
-                                      path + '_adata')
+    names = os.listdir(input_path)
+    for name in names:
+        input_dir_path = os.path.join(input_path, name)
+        data_dir_path = os.path.join(data_path, name)
+        for i in ['MASK', 'COMBINE', 'PARSING']:
+            images_num += copy_images(
+                os.path.join(input_dir_path, name + '_' + i), output_path,
+                name + '_' + i)
+        images_num += copy_images(data_dir_path, output_path, name + '_adata')
     stop = time()
     use_time = stop - start
     print('拷贝' + str(images_num) + '张图片用时为' + str(use_time // 3600) + '小时:' +
           str(use_time % 3600 // 60) + '分:' + str(use_time % 60) + '秒')
     print('--------------end-----------------')
+
+
+# def copy_main():
+#     images_num = 0
+#     start = time()
+#     start_path = 'F:/human/result'
+#     start_data_path = 'F:/human/data'
+#     output_path = os.path.join(start_path, 't')
+#     if not os.path.exists(output_path):
+#         os.makedirs(output_path)
+#     with open('./input.txt', 'r') as f:
+#         for path in f.readlines():
+#             path = path.rstrip('\n')
+#             p = path.split('_')
+#             input_path = os.path.join(start_path, 'final', p[0], path)
+#             input_data_path = os.path.join(start_data_path, p[0], path)
+#             for i in ['MASK', 'COMBINE', 'PARSING']:
+#                 images_num += copy_images(
+#                     os.path.join(input_path, path + '_' + i), output_path,
+#                     path + '_' + i)
+#             images_num += copy_images(input_data_path, output_path,
+#                                       path + '_adata')
+#     stop = time()
+#     use_time = stop - start
+#     print('拷贝' + str(images_num) + '张图片用时为' + str(use_time // 3600) + '小时:' +
+#           str(use_time % 3600 // 60) + '分:' + str(use_time % 60) + '秒')
+#     print('--------------end-----------------')
 
 
 def copy_fillup_images(fillup_path, path):
@@ -114,6 +133,7 @@ def return_main(fillup_path, input_path, result_path):
 
 
 if __name__ == '__main__':
-    # copy_main()
-    return_main('F:/human/result/ttt', 'F:/human/result/t',
-                'F:/human/result/jieguo')
+    copy_main()
+    # return_main('F:/human/result/ttt', 'F:/human/result/t',
+    #             'F:/human/result/jieguo')
+    # removeFiles('F:/human/result/temp')
